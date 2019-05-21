@@ -73,6 +73,24 @@ public class ${className} extends BaseEntity{
 	public ${column.javaType} get${column.columnName}() {
 		return this.${column.columnNameLower};
 	}
+	
+	<#if column.isDateTimeColumn>
+    	public void set${column.columnName}Begin(String value) {
+            this.${column.columnNameLower}Begin = value;
+        }
+        
+        public String  get${column.columnName}Begin() {
+            return this.${column.columnNameLower}Begin;
+        }
+        
+        public void set${column.columnName}End(String value) {
+            this.${column.columnNameLower}End = value;
+        }
+        
+        public String  get${column.columnName}End() {
+            return this.${column.columnNameLower}End;
+        }
+    </#if>
 	</#if>
 	</#list>
 </#macro>

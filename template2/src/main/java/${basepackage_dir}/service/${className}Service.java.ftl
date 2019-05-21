@@ -3,7 +3,6 @@
 package ${basepackage}.service;
 
 import java.util.List;
-import java.util.Map;
 
 import ${basepackage}.bean.${className};
 import com.zhongkexinli.micro.serv.common.msg.LayUiTableResultResponse;

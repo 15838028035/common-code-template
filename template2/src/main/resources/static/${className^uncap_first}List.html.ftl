@@ -27,17 +27,7 @@
     <script src="scripts/bootstrap-table/extensions/export/tableExport.js"></script>
     <script src="scripts/bootstrap-table/extensions/export/bootstrap-table-export.js"></script>
 
-    <link href="scripts/bootstrap-treeview/bootstrap-treeview.css" rel="stylesheet">
-    <script src="scripts/bootstrap-treeview/bootstrap-treeview.min.js"></script>
-
-    <link href="scripts/BootStrap-addTabs/bootstrap.addtabs.css" rel="stylesheet">
-    <script src="scripts/BootStrap-addTabs/bootstrap.addtabs.js"></script>
-
     <script src="scripts/bootbox/bootbox.min.js"></script>
-
-    <link href="scripts/bootstrap3-dialog/css/bootstrap-dialog.css" rel="stylesheet">
-    <script src="scripts/bootstrap3-dialog/js/bootstrap-dialog.js"></script>
-    <script src="scripts/bootstrap3-dialog/bootstrap3-dialog-ext.js"></script>
 
     <script src="scripts/bootstrap-datetimepicker/js/moment.js"></script>
     <script src="scripts/bootstrap-datetimepicker/js/moment_zh-CN.js"></script>
@@ -45,34 +35,14 @@
     <script src="scripts/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
     <script src="scripts/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 
-    <link href="scripts/bootstrapvalidator/css/bootstrapValidator.css" rel="stylesheet">
-    <script src="scripts/bootstrapvalidator/js/bootstrapValidator.js"></script>
-    <script src="scripts/bootstrapvalidator/js/language/zh_CN.js"></script>
-
-
-    <link href="scripts/Magnific-Popup/magnific-popup.css" rel="stylesheet">
-    <script src="scripts/Magnific-Popup/jquery.magnific-popup.js"></script>
-
-
-    <script src="scripts/jquery/jqueryui/jquery-ui-1.8.1.custom.min.js" type="text/javascript"></script>
-
-    <link href="scripts/bootstrap-fileinput/css/fileinput.css" rel="stylesheet">
-    <script src="scripts/bootstrap-fileinput/js/fileinput.js"></script>
-
-
-    <link href="scripts/bootstrap-wysihtml5/bootstrap3-wysihtml5.css" rel="stylesheet">
-    <script src="scripts/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js"></script>
-
     <script src="scripts/jquery.cookie.js"></script>
     <script src="scripts/common.js"></script>
-
 
 <script language="javascript"  type="text/javascript">
 </script>
 </head>
 
 <body>
-
 
 <div class="panel-body" style="padding-bottom:0px;">
         <div class="panel panel-default">
@@ -169,6 +139,7 @@
                 dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
                 totalField: 'total',
                 toolbar: '#toolbar',                //工具按钮用哪个容器
+                undefinedText:'',                   //默认值-
                 striped: true,                      //是否显示行间隔色
                 cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
                 pagination: true,                   //是否显示分页（*）

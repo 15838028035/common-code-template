@@ -45,7 +45,7 @@ public class ${className}Controller extends BaseController{
 	@Autowired
 	private ${className}Service ${classNameLower}Service;
 	
-	@ApiOperation(value = "列表")
+	@ApiOperation(value = "分页列表")
 	@RequestMapping(value = "/api/${className}", method = RequestMethod.GET)
 	public LayUiTableResultResponse page(@RequestParam(defaultValue = "10") int limit,
 	      @RequestParam(defaultValue = "1") int offset,@RequestParam Map<String, Object> params) {
@@ -102,14 +102,11 @@ public class ${className}Controller extends BaseController{
 		return ${classNameLower};
 	}
 		
-	/** 逻辑删除 */
-	@ApiOperation(value = "逻辑删除")
+	/** 物理删除 */
+	@ApiOperation(value = "物理删除")
 	@RequestMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}",method=RequestMethod.DELETE)
 	public RestAPIResult2 delete(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ) {
-		${className} ${classNameLower} = ${classNameLower}Service.selectByPrimaryKey(id);
-		 ${classNameLower}.setEnableFlag("0");//失效
-		 ${classNameLower}Service.updateByPrimaryKey(${classNameLower});
-			
+		${classNameLower}Service.deleteByPrimaryKey(${table.idColumn.columnNameFirstLower});
 		return new RestAPIResult2();
 	}
 
@@ -117,7 +114,7 @@ public class ${className}Controller extends BaseController{
 	@ApiOperation(value = "显示")
 	@RequestMapping(value="/api/${className}/showInfo/{${table.idColumn.columnNameFirstLower}}", method = RequestMethod.GET)
 	public  Map<String,Object> showInfo(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ){
-		Map<String,Object> retMap =new HashMap();
+		Map<String,Object> retMap =new HashMap<>();
 		${className} ${classNameLower} =${classNameLower}Service.selectByPrimaryKey(${table.idColumn.columnNameFirstLower});
 		if(${classNameLower}== null) {
 			${classNameLower} = new ${className}();
