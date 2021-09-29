@@ -17,20 +17,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zhongkexinli.micro.serv.common.bean.RestAPIResult2;
+import com.zhongkexinli.micro.serv.common.bean.RestApiResult2;
 import com.zhongkexinli.micro.serv.common.msg.LayUiTableResultResponse;
 import com.zhongkexinli.micro.serv.common.pagination.Query;
-import com.zhongkexinli.micro.serv.common.util.DateUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 
 
 /**
@@ -46,7 +50,13 @@ public class ${className}Controller extends BaseController{
 	private ${className}Service ${classNameLower}Service;
 	
 	@ApiOperation(value = "分页列表")
-	@RequestMapping(value = "/api/${className}", method = RequestMethod.GET)
+	@ApiImplicitParams({  
+	        	
+			<#list table.columns as column>
+			@ApiImplicitParam(name = "${column.columnNameLower}",value = "${column.remarks}",paramType = "path",dataType = "${column.javaType}"),
+			</#list>
+		})
+	@GetMapping(value = "/api/${className}")
 	public LayUiTableResultResponse page(@RequestParam(defaultValue = "10") int limit,
 	      @RequestParam(defaultValue = "1") int offset,@RequestParam Map<String, Object> params) {
 			Query query= new Query(params);
@@ -54,8 +64,14 @@ public class ${className}Controller extends BaseController{
 	}
 	 
 		@ApiOperation(value = "新增")
-		@RequestMapping(value = "/api/${className}",method=RequestMethod.POST)
-		public RestAPIResult2 create(@ModelAttribute ${className} ${classNameLower},HttpServletRequest request)  {
+		@ApiImplicitParams({  
+	        	
+			<#list table.columns as column>
+			@ApiImplicitParam(name = "${column.columnNameLower}",value = "${column.remarks}",paramType = "path",dataType = "${column.javaType}", required=true),
+			</#list>
+		})
+		@PostMapping(value = "/api/${className}")
+		public RestApiResult2<> create(@RequestBody ${className} ${classNameLower},HttpServletRequest request)  {
 			
 			try {
 					Long createBy = getLoginId(request);
@@ -66,35 +82,41 @@ public class ${className}Controller extends BaseController{
 					
 				}catch(Exception e) {
 					logger.error("[${table.remarks}]-->新增失败" ,e);
-					return new RestAPIResult2().respCode(0).respMsg("新增失败 {}" ,e.getMessage());
+					return new RestApiResult2().respCode(0).respMsg("新增失败 {}" ,e.getMessage());
 				}
 				
-				return new RestAPIResult2();
+				return new RestApiResult2<>().respData(${classNameLower});
 	}
 	 
 		@ApiOperation(value = "更新")
-		@RequestMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}",method=RequestMethod.PUT)
-		public RestAPIResult2 update(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ,@ModelAttribute ${className} ${classNameLower},HttpServletRequest request)  {
+		@ApiImplicitParams({  
+	        	
+			<#list table.columns as column>
+			@ApiImplicitParam(name = "${column.columnNameLower}",value = "${column.remarks}",paramType = "path",dataType = "${column.javaType}", required=true),
+			</#list>
+		})
+		@PutMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}")
+		public RestApiResult2<String> update(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ,@RequestBody ${className} ${classNameLower},HttpServletRequest request)  {
 			try {
 					
 					Long createBy = getLoginId(request);
 					${classNameLower}.setUpdateUserId(createBy);
-					${classNameLower}.setUpdateByUname(getUserName(request));
-					${classNameLower}.setUpdateDate(DateUtil.getNowDateYYYYMMddHHMMSS());
+					${classNameLower}.setUpdateUserName(getUserName(request));
+					${classNameLower}.setUpdateTime(new Date());
 					${classNameLower}Service.updateByPrimaryKeySelective(${classNameLower});
 					
 				}catch(Exception e) {
 					logger.error("[${table.remarks}]-->更新失败" ,e);
-					return new RestAPIResult2().respCode(0).respMsg("更新失败 {}" ,e.getMessage());
+					return new RestApiResult2().respCode(0).respMsg("更新失败 {}" ,e.getMessage());
 				}
 				
-				return new RestAPIResult2();
+				return new RestApiResult2<>();
 	}
 		
 	/** 显示 */
 	@ApiOperation(value = "查看")
-	@RequestMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}", method = RequestMethod.GET)
-	public ${className} show(@PathVariable("id") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} )  {
+	@GetMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}")
+	public ${className} show(@PathVariable("{${table.idColumn.columnNameFirstLower}}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} )  {
 		${className} ${classNameLower} =${classNameLower}Service.selectByPrimaryKey(${table.idColumn.columnNameFirstLower});
 		if(${classNameLower}== null) {
 			${classNameLower} = new ${className}();
@@ -104,15 +126,15 @@ public class ${className}Controller extends BaseController{
 		
 	/** 物理删除 */
 	@ApiOperation(value = "物理删除")
-	@RequestMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}",method=RequestMethod.DELETE)
-	public RestAPIResult2 delete(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ) {
+	@DeleteMapping(value="/api/${className}/{${table.idColumn.columnNameFirstLower}}")
+	public RestApiResult2<String> delete(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ) {
 		${classNameLower}Service.deleteByPrimaryKey(${table.idColumn.columnNameFirstLower});
-		return new RestAPIResult2();
+		return new RestApiResult2<>();
 	}
 
 	/** 显示 */
 	@ApiOperation(value = "显示")
-	@RequestMapping(value="/api/${className}/showInfo/{${table.idColumn.columnNameFirstLower}}", method = RequestMethod.GET)
+	@GetMapping(value="/api/${className}/showInfo/{${table.idColumn.columnNameFirstLower}}")
 	public  Map<String,Object> showInfo(@PathVariable("${table.idColumn.columnNameFirstLower}") ${table.idColumn.javaType} ${table.idColumn.columnNameFirstLower} ){
 		Map<String,Object> retMap =new HashMap<>();
 		${className} ${classNameLower} =${classNameLower}Service.selectByPrimaryKey(${table.idColumn.columnNameFirstLower});
@@ -125,12 +147,21 @@ public class ${className}Controller extends BaseController{
 		return retMap;
 	}
 	
-	@ApiOperation(value = "列表")
-	@RequestMapping(value = "/api/${className}/queryList", method = RequestMethod.GET)
-	public RestAPIResult2 queryList(@RequestParam Map<String, Object> params) {
+	@ApiOperation(value = "列表不分页")
+	@ApiImplicitParams({  
+	        	
+			<#list table.columns as column>
+			@ApiImplicitParam(name = "${column.columnNameLower}",value = "${column.remarks}",paramType = "path",dataType = "${column.javaType}"),
+			</#list>
+		})
+	@GetMapping(value = "/api/${className}/queryList")
+		@ApiResponses({
+        @ApiResponse(code = 200, message = "ok", response=${className}.class),
+    })
+	public RestApiResult2 queryList(@RequestParam Map<String, Object> params) {
 			Query query= new Query(params);
 			List<${className}> list = ${classNameLower}Service.selectByExample(query);
-			return new RestAPIResult2().respData(list);
+			return new RestApiResult2().respData(list);
 	}
 }
 

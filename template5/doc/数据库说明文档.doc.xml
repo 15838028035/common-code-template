@@ -1,0 +1,9 @@
+
+<#list tableList as tableA>
+  tableName:${tableA.sqlName}
+  <#list tableA.columns as column>
+     columnName: ${column.sqlName}
+     sqlType:${column.sqlType}
+     remarks:${column.remarks}
+  </#list>
+</#list>

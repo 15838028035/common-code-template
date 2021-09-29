@@ -1,0 +1,6 @@
+<#assign className = table.className>   
+<#assign classNameLower = className?uncap_first> 
+
+
+<!-- generator-insert-location -->
+<h3>这是一个简单的标题测试${className} </h3>

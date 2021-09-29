@@ -4,6 +4,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <#macro mapperEl value>${r"#{"}${value}}</#macro>
+<#macro mapperE2 value>${r"${"}${value}}</#macro>
 
 <#macro mapperElJdbc value jdbcValue >${r"#{"}${value},jdbcType=${jdbcValue}}</#macro>
 <#macro namespace>${className}.</#macro>
@@ -69,7 +70,7 @@
    
 </insert>
 
- <insert id="insertSelective" parameterType="${basepackage}.bean.${className}">
+ <insert id="insertSelective" parameterType="${basepackage}.bean.${className}" useGeneratedKeys="true" keyProperty="${table.idColumn.columnNameFirstLower}" >
           INSERT INTO ${table.sqlName} 
 	         <trim prefix="(" suffix=")" suffixOverrides="," >
 	        <#list table.columns as column>
@@ -124,34 +125,7 @@
 		</#list>	        
   
 </update>
-    
-    <select id="select" resultMap="${classNameLower}Result">
-	 select 
-    	<include refid="Base_Column_List"/>
-	   
-	        from ${table.sqlName} WHERE 1=1  
-	  
-		<#list table.columns as column>
-		<#if column.isStringColumn>
-			<#if column.listMatchType =='like'>
-			<if test="${column.columnNameLower} != null and  ${column.columnNameLower} != ''" >
-				and   ${column.sqlName} like concat('%', <@mapperElJdbc column.columnNameFirstLower column.jdbcSqlTypeName/>, '%')
-			</if>
-			<#else>
-			<if test="${column.columnNameLower} != null and  ${column.columnNameLower} != ''" >
-				and   ${column.sqlName} = <@mapperElJdbc column.columnNameFirstLower column.jdbcSqlTypeName/>
-			</if>
-							
-			</#if>
-		<#else>
-			<if test="${column.columnNameLower} != null ">
-			and   ${column.sqlName} = <@mapperElJdbc column.columnNameFirstLower column.jdbcSqlTypeName/>
-			</if>
-		 </#if>
-		</#list>
-		
-    </select>
-      
+           
 <select id="selectByExample" resultMap="${classNameLower}Result" >
 	 select 
 		<include refid="Base_Column_List"/>
@@ -175,6 +149,10 @@
 			</if>
 		 </#if>
 		</#list>
+		
+		<if test="sortName!= null and  sortName != ''" >
+            order by <@mapperE2 "sortName"/>  <@mapperE2 "sortOrder"/>
+        </if>
 					
   </select>
 
@@ -203,7 +181,7 @@
 		</#list>
 		
 		<if test="sortName!= null and  sortName != ''" >
-			order by $sortName$ $sortOrder$ 
+			order by <@mapperE2 "sortName"/>  <@mapperE2 "sortOrder"/>
 		</if>
 			
   </select>

@@ -1,0 +1,92 @@
+<#assign className = table.className>   
+<#assign classNameLower = className?uncap_first> 
+package ${basepackage}.model.${modelName};
+
+import java.util.Date;
+
+/**
+*${table.tableAlias}
+*/
+public class ${className} {
+	
+<#list table.columns as column>
+	<#if !column.fk>
+	/**
+	 * ${column.remarks}  ${column.sqlName}
+	 */
+	<#if column.isStringColumn>
+	private ${column.javaType} ${column.columnNameLower} = "";
+	</#if>
+	<#if column.isDateTimeColumn>
+	private ${column.javaType} ${column.columnNameLower};
+	</#if>
+	<#if column.isNumberColumn>
+	private ${column.javaType} ${column.columnNameLower};
+	</#if>
+	
+	 <#if column.isDateTimeColumn>
+	 /**
+	 * ${column.remarks}Begin
+	 */
+	private String  ${column.columnNameLower}Begin;
+	/**
+	 * ${column.remarks}End
+	 */
+	private String ${column.columnNameLower}End;
+	</#if>
+	</#if>
+</#list>
+
+<#list table.importedKeys.associatedTables?values as foreignKey>
+	<#assign fkSqlTable = foreignKey.sqlTable>
+	<#assign fkTable    = fkSqlTable.className>
+	<#assign fkPojoClass = fkSqlTable.className>
+	<#assign fkPojoClassVar = fkPojoClass?uncap_first>
+	private ${fkPojoClass} ${fkPojoClassVar};
+	
+	public void set${fkPojoClass}(${fkPojoClass} ${fkPojoClassVar}){
+		this.${fkPojoClassVar} = ${fkPojoClassVar};
+	}
+	
+	public ${fkPojoClass} get${fkPojoClass}() {
+		return ${fkPojoClassVar};
+	}
+</#list>
+
+<@generateJavaColumns/>
+
+	
+}
+
+<#macro generateJavaColumns>
+	<#list table.columns as column>
+	<#if !column.fk>
+	public void set${column.columnName}(${column.javaType} value) {
+		this.${column.columnNameLower} = value;
+	}
+	
+	public ${column.javaType} get${column.columnName}() {
+		return this.${column.columnNameLower};
+	}
+	
+	<#if column.isDateTimeColumn>
+    	public void set${column.columnName}Begin(String value) {
+            this.${column.columnNameLower}Begin = value;
+        }
+        
+        public String  get${column.columnName}Begin() {
+            return this.${column.columnNameLower}Begin;
+        }
+        
+        public void set${column.columnName}End(String value) {
+            this.${column.columnNameLower}End = value;
+        }
+        
+        public String  get${column.columnName}End() {
+            return this.${column.columnNameLower}End;
+        }
+    </#if>
+	</#if>
+	</#list>
+</#macro>
+
